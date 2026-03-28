@@ -26,7 +26,7 @@ All controller and middleware logic was written from scratch, with validation an
 
 ## Disclosure of AI Tool Usage
 
-I used AI tools to fill out the documentation after the coding portion was complete. AI tools are good at summarizing the codebase and wording descriptions well.
+I used AI tools (Github Copilot) to fill out the documentation after the coding portion was complete. AI tools are good at summarizing the codebase and wording descriptions well.
 
 ## Authenticity Explanations
 
