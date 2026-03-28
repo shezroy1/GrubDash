@@ -40,15 +40,19 @@ const bodyHasProperty = (propertyName) => {
 const bodyHasPrice = () => {
   return (req, res, next) => {
     const { data: { price } = {} } = req.body;
-
-    if (price && price > 0) {
-      return next();
+    if (price === undefined) {
+      return next({
+        status: 400,
+        message: "Dish must include a price",
+      });
     }
-
-    next({
-      status: 400,
-      message: `price $${price} not valid.`,
-    });
+    if (typeof price !== "number" || isNaN(price) || price <= 0) {
+      return next({
+        status: 400,
+        message: "Dish must have a price that is an integer greater than 0",
+      });
+    }
+    return next();
   };
 };
 
@@ -56,13 +60,13 @@ const bodyHasId = () => {
   return (req, res, next) => {
     const { data: { id } = {} } = req.body;
 
-    if (!Boolean(id) || id === res.local.dish.id) {
+    if (!Boolean(id) || id === res.locals.dish.id) {
       return next();
     }
 
     next({
       status: 400,
-      message: `Price $${price} not valid.`,
+      message: `id $${id} not valid.`,
     });
   };
 };
@@ -102,7 +106,21 @@ const destroy = (req, res, next) => {
   next({ status: 405, message: `Dish id ${dishId} cannot be deleted.` });
 };
 
-const update = (req, res, next) => {};
+const update = (req, res, next) => {
+  const dish = res.locals.dish;
+  const { data: { id, name, description, image_url, price } = {} } = req.body;
+
+  dish.name = name;
+  dish.description = description;
+  dish.image_url = image_url;
+  dish.price = price;
+
+  if (id) {
+    dish.id = id;
+  }
+
+  res.json({ data: dish });
+};
 
 module.exports = {
   list,
@@ -118,9 +136,10 @@ module.exports = {
   update: [
     dishExists,
     bodyHasId(),
+    bodyHasPrice(),
     bodyHasProperty("name"),
     bodyHasProperty("description"),
-    bodyHasProperty("price"),
     bodyHasProperty("image_url"),
+    update,
   ],
 };

@@ -4,16 +4,15 @@ const methodNotAllowed = require("../errors/methodNotAllowed");
 
 // TODO: Implement the /dishes routes needed to make the tests pass
 router
-  .route("/")
-  .get(dishesController.list)
-  .post(dishesController.create)
-  .all(methodNotAllowed);
-
-router
   .route("/:dishId")
   .get(dishesController.read)
   .delete(dishesController.destroy)
   .put(dishesController.update)
+  .all(methodNotAllowed);
+router
+  .route("/")
+  .get(dishesController.list)
+  .post(dishesController.create)
   .all(methodNotAllowed);
 
 module.exports = router;
