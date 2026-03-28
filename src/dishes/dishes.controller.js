@@ -6,16 +6,16 @@ const dishes = require(path.resolve("src/data/dishes-data"));
 // Use this function to assign ID's when necessary
 const nextId = require("../utils/nextId");
 
-const dishExists = () => {
+const dishExists = (req, res, next) => {
   const { dishId } = req.params;
-  const foundDish = dishes.find((dish) => dish.id === Number(dishId));
+  const foundDish = dishes.find((dish) => dish.id === dishId);
 
   if (foundDish) {
-    res.local.dish = foundDish;
-    return nextId();
+    res.locals.dish = foundDish;
+    return next();
   }
 
-  nextId({ status: 404, message: `Dish id ${dishId} not found.` });
+  next({ status: 404, message: `Dish id ${dishId} not found.` });
 };
 
 const bodyHasProperty = (propertyName) => {
@@ -30,7 +30,7 @@ const bodyHasProperty = (propertyName) => {
       return next();
     }
 
-    nextId({
+    next({
       status: 400,
       message: `Dish property ${propertyName} not found.`,
     });
@@ -45,9 +45,9 @@ const bodyHasPrice = () => {
       return next();
     }
 
-    nextId({
+    next({
       status: 400,
-      message: `Price $${price} not valid.`,
+      message: `price $${price} not valid.`,
     });
   };
 };
@@ -60,7 +60,7 @@ const bodyHasId = () => {
       return next();
     }
 
-    nextId({
+    next({
       status: 400,
       message: `Price $${price} not valid.`,
     });
@@ -73,7 +73,7 @@ const list = (req, res) => {
 };
 
 const read = (req, res) => {
-  const foundDish = res.local.dish;
+  const foundDish = res.locals.dish;
 
   res.json({ data: foundDish });
 };
@@ -96,10 +96,10 @@ const create = (req, res) => {
 
 const destroy = (req, res, next) => {
   const { dishId } = req.params;
-  const index = dishes.findIndex((dish) => dish.id === Number(dishId));
+  const index = dishes.findIndex((dish) => dish.id === dishId);
 
   const deletedDish = dishes.splice(index, 1);
-  res.sendStatus(405);
+  next({ status: 405, message: `Dish id ${dishId} cannot be deleted.` });
 };
 
 const update = (req, res, next) => {};
