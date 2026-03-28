@@ -37,6 +37,36 @@ const bodyHasProperty = (propertyName) => {
   };
 };
 
+const bodyHasPrice = () => {
+  return (req, res, next) => {
+    const { data: { price } = {} } = req.body;
+
+    if (price && price > 0) {
+      return next();
+    }
+
+    nextId({
+      status: 400,
+      message: `Price $${price} not valid.`,
+    });
+  };
+};
+
+const bodyHasId = () => {
+  return (req, res, next) => {
+    const { data: { id } = {} } = req.body;
+
+    if (!Boolean(id) || id === res.local.dish.id) {
+      return next();
+    }
+
+    nextId({
+      status: 400,
+      message: `Price $${price} not valid.`,
+    });
+  };
+};
+
 // TODO: Implement the /dishes handlers needed to make the tests pass
 const list = (req, res) => {
   res.json({ data: dishes });
@@ -64,14 +94,33 @@ const create = (req, res) => {
   res.status(201).json({ data: newDish });
 };
 
+const destroy = (req, res, next) => {
+  const { dishId } = req.params;
+  const index = dishes.findIndex((dish) => dish.id === Number(dishId));
+
+  const deletedDish = dishes.splice(index, 1);
+  res.sendStatus(405);
+};
+
+const update = (req, res, next) => {};
+
 module.exports = {
   list,
   read: [dishExists, read],
   create: [
     bodyHasProperty("name"),
     bodyHasProperty("description"),
-    bodyHasProperty("price"),
+    bodyHasPrice(),
     bodyHasProperty("image_url"),
     create,
+  ],
+  destroy: [dishExists, destroy],
+  update: [
+    dishExists,
+    bodyHasId(),
+    bodyHasProperty("name"),
+    bodyHasProperty("description"),
+    bodyHasProperty("price"),
+    bodyHasProperty("image_url"),
   ],
 };

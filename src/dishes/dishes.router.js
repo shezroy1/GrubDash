@@ -5,6 +5,8 @@ const dishesController = require("./dishes.controller");
 router
   .route("/:dishId")
   .get(dishesController.read)
-  .post(dishesController.create);
+  .post(dishesController.create)
+  .delete(dishesController.destroy)
+  .put(dishesController.update);
 router.route("/").get(dishesController.list);
 module.exports = router;
