@@ -114,7 +114,7 @@ module.exports = {
     bodyHasProperty("image_url"),
     create,
   ],
-  destroy: [dishExists, destroy],
+  destroy,
   update: [
     dishExists,
     bodyHasId(),
