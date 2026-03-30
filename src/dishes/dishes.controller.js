@@ -115,10 +115,6 @@ const update = (req, res, next) => {
   dish.image_url = image_url;
   dish.price = price;
 
-  if (id) {
-    dish.id = id;
-  }
-
   res.json({ data: dish });
 };
 

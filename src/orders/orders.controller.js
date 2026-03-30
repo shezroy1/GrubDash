@@ -144,10 +144,6 @@ const update = (req, res, next) => {
   order.status = status;
   order.dishes = dishes;
 
-  if (id) {
-    order.id = id;
-  }
-
   res.json({ data: order });
 };
 
